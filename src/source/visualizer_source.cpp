@@ -257,7 +257,7 @@ obs_properties_t *get_properties_for_visualiser(void *data)
 	/* Scale stuff */
 	auto auto_scale = obs_properties_add_bool(props, S_AUTO_SCALE, T_AUTO_SCALE);
 	obs_property_set_modified_callback(auto_scale, use_auto_scale_changed);
-	obs_properties_add_float_slider(props, S_SCALE_SIZE, T_SCALE_SIZE, 0.001, 2, 0.001);
+	obs_properties_add_float_slider(props, S_SCALE_SIZE, T_SCALE_SIZE, 0.00001, 2, 0.00001);
 	obs_properties_add_float_slider(props, S_SCALE_BOOST, T_SCALE_BOOST, 0.001, 100, 0.001);
 
 	/* Smoothing stuff */

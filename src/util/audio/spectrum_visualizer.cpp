@@ -455,16 +455,27 @@ void spectrum_visualizer::generate_bars(uint32_t number_of_bars, size_t fftw_res
 
 	for (auto i = 0u; i < number_of_bars; i++) {
 		double freq_magnitude = 0.0;
-		for (auto cutoff_freq = low_cutoff_frequencies[i];
+	/*	for (auto cutoff_freq = low_cutoff_frequencies[i];
 			 cutoff_freq <= high_cutoff_frequencies[i] && cutoff_freq < fftw_results; ++cutoff_freq) {
 			freq_magnitude += std::sqrt((fftw_output[cutoff_freq][0] * fftw_output[cutoff_freq][0]) +
 										(fftw_output[cutoff_freq][1] * fftw_output[cutoff_freq][1]));
-		}
-		(*bars)[i] = freq_magnitude / (high_cutoff_frequencies[i] - low_cutoff_frequencies[i] + 1);
+		}*/
+		float f = i / ((float)number_of_bars); // maps bar index to 0 - 1
+		f = pow(10, f) * 0.1 * m_fftw_results; // selects a fftw result using an expontential scale
+		int low = floor(f);
+		int high = ceil(f);
+
+		// calculates length of imaginary and real vector
+		float val_amp = powf(fftw_output[low][0], 2) * (f - low) + powf(fftw_output[high][0], 2) * (high - f);
+		val_amp *= val_amp;
+		float val_phase = powf(fftw_output[low][1], 2) * (f - low) + powf(fftw_output[high][1], 2) * (high - f);
+		val_phase *= val_phase;
+
+		(*bars)[i] = val_amp + val_phase; //freq_magnitude / (high_cutoff_frequencies[i] - low_cutoff_frequencies[i] + 1);
 
 		/* boost high freqs */
-		(*bars)[i] *= (std::log2(2 + i) * (100.f / number_of_bars));
-		(*bars)[i] = std::pow((*bars)[i], 0.5);
+		//(*bars)[i] *= (std::log10(f) * (100.f / number_of_bars));
+		(*bars)[i] = std::pow((*bars)[i], 2);
 	}
 }
 }
